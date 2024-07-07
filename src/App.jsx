@@ -3,10 +3,26 @@ import Header from "./componentes/Header"
 import Guitar from "./componentes/Guitar"
 import { db } from './data/db';
 function App() {
-    const [data,setData]= useState(db)    
+    const [data,setData]= useState(db) 
+    const [cart,setCart]= useState([])   
+    function addToCart(item) {
+        const itemExists = cart.findIndex(guitar => guitar.id === item.id);//devuelve -1 si no esta en el carrito
+        if (itemExists >= 0) {
+            // Si el producto ya está en el carrito
+            const updatedCart = [...cart];
+            updatedCart[itemExists].quantity++;
+            setCart(updatedCart);
+        } else {
+            // Si el producto no está en el carrito
+            item.quantity = 1;
+            setCart([...cart, item]);
+        }
+    }
     return (
     <>
-    <Header />
+    <Header 
+        cart={cart}
+    />
     
 
     <main className="container-xl mt-5">
@@ -15,7 +31,9 @@ function App() {
         <div className="row mt-5">
             {data.map((guitar) => (
                 <Guitar
+                    key={guitar.name}
                     guitar={guitar}
+                    addToCart={addToCart}
                 />
             )
             )}
